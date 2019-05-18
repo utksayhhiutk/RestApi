@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>User Audit</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var sessionval = "";
+            sessionval = sessionStorage.Email;
+            $("#useremail").html(sessionval);
+            //alert(sessionval);
+            if ((sessionval == "")) {
+                alert('You are not authorized to access.Please login .Thank You!');
+
+                window.location = "LoginPage.html";
+            }
+
+            var baseUrl = "api/user/GetUserLog";
+            $.getJSON(baseUrl, {
+            }).done(function (data) {
+                var tr;
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr />');
+                   
+                    tr.append("<td  style='width:100px' align='center' class='fn'>" + data[i].FirstName+"</td>");
+                    tr.append("<td  style='width:100px' align='center'  class='timein'>" + data[i].Email + "</td>");
+                    tr.append("<td  style='width:100px' align='center' class='timeout'>" + data[i].Intime + "</td>");
+                    tr.append("<td  style='width:100px' align='center' class='timeout'>" + data[i].Outtime + "</td>");
+                    $('#TabelValue').append(tr);
+                }
+            });
+            $("#Logout").on("click", function () {
+                debugger;
+                if (confirm("Do you want to LogOut right Now?")) {
+                    var _usersend = {};
+                    _usersend.Email = ($('#useremail').html());
+                    $.ajax({
+                        type: "POST",
+                        url: "api/user/PutUserLog",
+                        data: JSON.stringify(_usersend),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (r) {
+                            window.location = "LoginPage.html";
+                        }
+                    });
+                }
+            });
+        });
+
+        </script>
+
+    <style>
+             table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+             
+            text-align: left;
+            padding: 8px;
+        }
+        th{
+             background-color: black;
+              color:white;
+        }
+
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+    </style>
+        </head>
+        <body>
+
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="UserList.html">User Audit</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="UserList.html">Home</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="AuditLog.html">Audit Page</a></li>
+                                <li><a id="Logout">Log Out</a></li>
+                            </ul>
+                        </li>
+                        <li class="active"><a href="#">Welcome,<label id="useremail"></label></a></li>
+
+                    </ul>
+                </div>
+            </nav>
+            <center> <h3>User Audit Page</h3></center>
+            <table class="table" cellpadding="0" cellspacing="0" id="TabelValue">
+                <tr>
+            
+                    <th style="width:100px" align="center">First Name</th>
+                 
+                    <th style="width:100px" align="center">Email</th>
+                    <th style="width:100px" align="center">In Time</th>
+                    <th style="width:100px" align="center">Out Time</th>
+                    
+
+                </tr>
+            </table>
+        </body>
+        </html>
